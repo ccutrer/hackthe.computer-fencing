@@ -187,6 +187,8 @@ points.each do |point|
     next
   end
   if segments.any? { |segment| segment.first[1] == segment[1][1] && segment.first[1] == point[1] && point.first >= segment.first[0] && point.first <= segment[1].first }
+    sleep 5
+    exit
     puts true
     next
   end
