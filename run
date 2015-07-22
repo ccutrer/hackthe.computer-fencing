@@ -1,5 +1,105 @@
-#!/usr/bin/python
+#!/usr/bin/env ruby
 
-# To solve this problem, make the './run' executable handle any
-# appropriate command line arguments and stdin and output the
-# solution to stdout.
+require 'rexml/document'
+#require 'byebug'
+
+file = $stdin
+#file = File.open('example1')
+
+data = file.read
+
+raw_xml, raw_points = data.split("\n\n")
+
+xml = REXML::Document.new(raw_xml)
+path = nil
+xml.elements.each('/svg/path') { |n| path = n.attributes['d'] if n.attributes['id'] == 'compound' }
+
+points = raw_points.split("\n").map { |x| x.split(', ').map(&:to_f) }
+
+polygon = []
+
+path.gsub!(/\r\n\t /, ',')
+path.gsub!(/,+/, ',')
+
+def parse_num(stuff)
+  stuff =~ /^((\+|-)?\d+(\.\d+)?)/
+  stuff.slice!(0, $1.length)
+  $1.to_f
+end
+
+def eat_space(stuff)
+  while(stuff[0] == ',')
+    stuff.slice!(0)
+  end
+end
+
+while !path.empty?
+  if path[0] == 'M' || path[0] == 'm'
+    path.slice!(0)
+    eat_space(path)
+    x = parse_num(path)
+    eat_space(path)
+    y = parse_num(path)
+    eat_space(path)
+    polygon << [x, y]
+  elsif path[0] == 'L' || path[0] == 'l'
+    command = path.slice!(0)
+    eat_space(path)
+    x = parse_num(path)
+    eat_space(path)
+    y = parse_num(path)
+    eat_space(path)
+    if command == 'l'
+      x += polygon.last.first
+      y += polygon.last.last
+    end
+    polygon << [x, y]
+  elsif path[0] == 'Z' || path[0] == 'z'
+    path.slice!(0)
+    polygon << polygon.first
+  end
+end
+
+E = 0.0001
+
+def ray_intersects_segment(source, segment)
+  segment.sort_by! { |(x, y)| y }
+  a, b = segment
+  if source.last == a.last || source.last == b.last
+    source = source.dup
+    source.last += E
+  end
+
+  if source.last < a.last || source.last > b.last
+    false
+  elsif source.first > segment.map(&:first).max
+    false
+  else
+    if source.first < segment.map(&:first).min
+      true
+    else
+      if a.first != b.first
+        m_red = (b.last - a.last)/(b.first - a.first)
+      else
+        m_red = Float::INFINITY
+      end
+      if a.first != source.first then
+        m_blue = (source.last - a.last)/(source.first - a.first)
+      else
+        m_blue = Float::INFINITY
+      end
+      m_blue >= m_red
+    end
+  end
+end
+
+points.each do |point|
+  intersections = 0
+  polygon.each_with_index do |point2, i|
+    next if i == 0
+    point1 = polygon[i - 1]
+    intersections += 1 if ray_intersects_segment(point, [point1, point2])
+  end
+
+  puts (intersections % 2 == 1)
+end
