@@ -183,8 +183,8 @@ end
 
 points.each do |point|
   if polygon.any? { |p| p == point }
-    sleep 5
-    exit 1
+    puts true
+    next
   end
   intersections = 0
   segments.each do |segment|
