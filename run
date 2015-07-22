@@ -136,7 +136,7 @@ while i < path.length
   end
 end
 
-puts polygon.inspect
+#puts polygon.inspect
 
 E = 0.0001
 
