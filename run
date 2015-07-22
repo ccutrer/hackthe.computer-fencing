@@ -137,7 +137,7 @@ while i < path.length
   end
 end
 
-sleep 5 if polygon[0][0] == polygon[1][0]
+sleep 5 if polygon[1][1] == polygon[2][1]
 
 E = 0.000000001
 
