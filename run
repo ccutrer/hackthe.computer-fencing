@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'rexml/document'
+require 'set'
 #require 'byebug'
 
 file = $stdin
@@ -18,46 +19,68 @@ points = raw_points.split("\n").map { |x| x.split(', ').map(&:to_f) }
 
 polygon = []
 
-path.gsub!(/\r\n\t /, ',')
-path.gsub!(/,+/, ',')
+DIGIT = %w{0 1 2 3 4 5 6 7 8 9}.to_set
 
-def parse_num(stuff)
-  stuff =~ /^((\+|-)?\d+(\.\d+)?)/
-  stuff.slice!(0, $1.length)
-  $1.to_f
-end
-
-def eat_space(stuff)
-  while(stuff[0] == ',')
-    stuff.slice!(0)
+def parse_num(stuff, index)
+  length = 0
+  if stuff[index] == '+' || stuff[index] == '-'
+    length += 1
   end
+  while (DIGIT.include?(stuff[index + length]))
+    length += 1
+  end
+  if stuff[index + length] == '.'
+    length += 1
+    while (DIGIT.include?(stuff[index + length]))
+      length += 1
+    end
+  end
+
+  stuff =~ /^((\+|-)?\d+(\.\d+)?)/
+  [stuff.slice(index, length).to_f, length]
 end
 
-while !path.empty?
-  if path[0] == 'M' || path[0] == 'm'
-    path.slice!(0)
-    eat_space(path)
-    x = parse_num(path)
-    eat_space(path)
-    y = parse_num(path)
-    eat_space(path)
+SPACE = ["\r", "\n", "\t", " ", ","].to_set
+def eat_space(stuff, index)
+  count = 0
+  while(SPACE.include?(stuff[index + count]))
+    count += 1
+  end
+  count
+end
+
+i = 0
+while i < path.length
+  if path[i] == 'M' || path[i] == 'm'
+    i += 1
+    i += eat_space(path, i)
+    x, j = parse_num(path, i)
+    i += j
+    i += eat_space(path, i)
+    y, j = parse_num(path, i)
+    i += j
+    i += eat_space(path, i)
     polygon << [x, y]
-  elsif path[0] == 'L' || path[0] == 'l'
-    command = path.slice!(0)
-    eat_space(path)
-    x = parse_num(path)
-    eat_space(path)
-    y = parse_num(path)
-    eat_space(path)
+  elsif path[i] == 'L' || path[i] == 'l'
+    command = path[i]
+    i += 1
+    i += eat_space(path, i)
+    x, j = parse_num(path, i)
+    i += j
+    i += eat_space(path, i)
+    y, j = parse_num(path, i)
+    i += j
+    i += eat_space(path, i)
     if command == 'l'
       x += polygon.last.first
       y += polygon.last.last
     end
     polygon << [x, y]
-  elsif path[0] == 'Z' || path[0] == 'z'
-    path.slice!(0)
+  elsif path[i] == 'Z' || path[i] == 'z'
+    i += 1
     polygon << polygon.first
   end
+  ++i
 end
 
 E = 0.0001
