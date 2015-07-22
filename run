@@ -17,6 +17,9 @@ xml.elements.each('/svg/path') { |n| path = n.attributes['d'] if n.attributes['i
 
 points = raw_points.split("\n").map { |x| x.split(', ').map(&:to_f) }
 
+sleep 5
+exit 1
+
 polygon = []
 
 DIGIT = %w{0 1 2 3 4 5 6 7 8 9}.to_set
@@ -131,15 +134,12 @@ while i < path.length
     end
     polygon << [polygon.last.first, y]
   else
-    sleep 5
     exit 1
   end
 end
 
 #puts polygon.inspect
 
-sleep 10
-exit 1
 
 E = 0.0001
 
