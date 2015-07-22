@@ -183,7 +183,7 @@ end
 
 points.each do |point|
   if polygon.any? { |p| p == point }
-    puts true
+    puts false
     next
   end
   intersections = 0
