@@ -97,8 +97,9 @@ polygon.each_with_index do |point2, i|
   next if i == 0
   point1 = polygon[i - 1]
   segment = [point1, point2].sort_by(&:last)
-  segment << segment.map(&:first).max
-  segment << segment.map(&:first).min
+  xes = segment.map(&:first)
+  segment << xes.max
+  segment << xes.min
   segments << segment
 end
 
