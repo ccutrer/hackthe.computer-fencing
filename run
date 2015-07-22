@@ -63,28 +63,27 @@ end
 E = 0.0001
 
 def ray_intersects_segment(source, segment)
-  segment.sort_by! { |(x, y)| y }
   a, b = segment
-  if source.last == a.last || source.last == b.last
+  if source[1] == a[1] || source[1] == b[1]
     source = source.dup
-    source.last += E
+    source[1] += E
   end
 
-  if source.last < a.last || source.last > b.last
+  if source[1] < a[1] || source[1] > b[1]
     false
-  elsif source.first > segment.map(&:first).max
+  elsif source.first > segment[2]
     false
   else
-    if source.first < segment.map(&:first).min
+    if source.first < segment[3]
       true
     else
       if a.first != b.first
-        m_red = (b.last - a.last)/(b.first - a.first)
+        m_red = (b[1] - a[1])/(b.first - a.first)
       else
         m_red = Float::INFINITY
       end
       if a.first != source.first then
-        m_blue = (source.last - a.last)/(source.first - a.first)
+        m_blue = (source[1] - a[1])/(source.first - a.first)
       else
         m_blue = Float::INFINITY
       end
@@ -93,12 +92,20 @@ def ray_intersects_segment(source, segment)
   end
 end
 
+segments = []
+polygon.each_with_index do |point2, i|
+  next if i == 0
+  point1 = polygon[i - 1]
+  segment = [point1, point2].sort_by(&:last)
+  segment << segment.map(&:first).max
+  segment << segment.map(&:first).min
+  segments << segment
+end
+
 points.each do |point|
   intersections = 0
-  polygon.each_with_index do |point2, i|
-    next if i == 0
-    point1 = polygon[i - 1]
-    intersections += 1 if ray_intersects_segment(point, [point1, point2])
+  segments.each do |segment|
+    intersections += 1 if ray_intersects_segment(point, segment)
   end
 
   puts (intersections % 2 == 1)
