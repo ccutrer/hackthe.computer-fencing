@@ -2,7 +2,7 @@
 
 require 'rexml/document'
 require 'set'
-require 'byebug'
+#require 'byebug'
 
 file = $stdin
 #file = File.open('example2')
