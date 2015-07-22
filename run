@@ -96,17 +96,15 @@ while i < path.length
   elsif path[i] == 'H' || path[i] == 'h'
     last_command = path[i]
     i += 1
-    x, i = read_coordinates(path, i)
+    x, i = read_coordinate(path, i)
     if last_command == 'h'
       x += polygon.last.first
     end
     polygon << [x, polygon.last.last]
   elsif path[i] == 'V' || path[i] == 'v'
-    sleep 5
-    exit 1
     last_command = path[i]
     i += 1
-    y, i = read_coordinates(path, i)
+    y, i = read_coordinate(path, i)
     if last_command == 'v'
       y += polygon.last.last
     end
