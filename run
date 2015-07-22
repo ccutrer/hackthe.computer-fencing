@@ -6,7 +6,7 @@ require 'rexml/document'
 file = $stdin
 #file = File.open('example1')
 
-data = file.read
+data = file.readlines.join("")
 
 raw_xml, raw_points = data.split("\n\n")
 
