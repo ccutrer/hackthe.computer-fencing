@@ -138,6 +138,9 @@ end
 
 #puts polygon.inspect
 
+sleep 10
+exit 1
+
 E = 0.0001
 
 def ray_intersects_segment(source, segment)
