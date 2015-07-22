@@ -35,11 +35,16 @@ def parse_num(stuff, index)
       length += 1
     end
   end
-
-  if length == 0
-    sleep 5
-    exit 1
+  if stuff[index + length] == 'e' || stuff[index + length] == 'E'
+    length += 1
+    if stuff[index + length] == '+' || stuff[index + length] == '-'
+      length += 1
+    end
+    while (DIGIT.include?(stuff[index + length]))
+      length += 1
+    end
   end
+
   [stuff.slice(index, length).to_f, length]
 end
 
