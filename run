@@ -36,7 +36,6 @@ def parse_num(stuff, index)
     end
   end
 
-  stuff =~ /^((\+|-)?\d+(\.\d+)?)/
   [stuff.slice(index, length).to_f, length]
 end
 
