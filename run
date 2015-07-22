@@ -138,7 +138,7 @@ while i < path.length
 end
 
 
-E = 0.0001
+E = 0.0000001
 
 def ray_intersects_segment(source, segment)
   a, b = segment
@@ -183,7 +183,7 @@ end
 
 points.each do |point|
   if polygon.any? { |p| p == point }
-    puts false
+    puts true
     next
   end
   intersections = 0
