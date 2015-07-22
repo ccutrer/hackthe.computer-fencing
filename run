@@ -186,10 +186,10 @@ points.each do |point|
     puts true
     next
   end
-#  if segments.any? { |segment| segment.first[1] == segment[1][1] && segment.first[1] == point[1] }
-#    puts true
-#    next
-#  end
+  if segments.any? { |segment| segment.first[1] == segment[1][1] && segment.first[1] == point[1] && point.first >= segment.first[0] && point.first <= segment[1].first }
+    puts true
+    next
+  end
   intersections = 0
   segments.each do |segment|
     intersections += 1 if ray_intersects_segment(point, segment)
