@@ -130,9 +130,10 @@ while i < path.length
       y += polygon.last.last
     end
     polygon << [polygon.last.first, y]
+  else
+    sleep 5
+    exit 1
   end
-
-  ++i
 end
 
 puts polygon.inspect
