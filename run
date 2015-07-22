@@ -76,7 +76,6 @@ def read_coordinates(path, i)
   [x, y, i]
 end
 
-path = 'M'
 i = 0
 last_command = nil
 while i < path.length
@@ -139,8 +138,6 @@ while i < path.length
     exit 1
   end
 end
-
-puts polygon.inspect
 
 
 E = 0.0001
