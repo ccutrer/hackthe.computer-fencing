@@ -57,39 +57,85 @@ def eat_space(stuff, index)
   count
 end
 
+def read_coordinate(path, i)
+  i += eat_space(path, i)
+  x, j = parse_num(path, i)
+  i += j
+  i += eat_space(path, i)
+  [x, i]
+end
+
+def read_coordinates(path, i)
+  i += eat_space(path, i)
+  x, j = parse_num(path, i)
+  i += j
+  i += eat_space(path, i)
+  y, j = parse_num(path, i)
+  i += j
+  i += eat_space(path, i)
+  [x, y, i]
+end
+
 i = 0
+last_command = nil
 while i < path.length
   if path[i] == 'M' || path[i] == 'm'
     i += 1
-    i += eat_space(path, i)
-    x, j = parse_num(path, i)
-    i += j
-    i += eat_space(path, i)
-    y, j = parse_num(path, i)
-    i += j
-    i += eat_space(path, i)
+    x, y, i = read_coordinates(path, i)
     polygon << [x, y]
   elsif path[i] == 'L' || path[i] == 'l'
-    command = path[i]
+    last_command = path[i]
     i += 1
-    i += eat_space(path, i)
-    x, j = parse_num(path, i)
-    i += j
-    i += eat_space(path, i)
-    y, j = parse_num(path, i)
-    i += j
-    i += eat_space(path, i)
-    if command == 'l'
+    x, y, i = read_coordinates(path, i)
+    if last_command == 'l'
       x += polygon.last.first
       y += polygon.last.last
     end
     polygon << [x, y]
+  elsif path[i] == 'H' || path[i] == 'h'
+    last_command = path[i]
+    i += 1
+    x, i = read_coordinates(path, i)
+    if last_command == 'h'
+      x += polygon.last.first
+    end
+    polygon << [x, polygon.last.last]
+  elsif path[i] == 'V' || path[i] == 'v'
+    last_command = path[i]
+    i += 1
+    y, i = read_coordinates(path, i)
+    if last_command == 'v'
+      y += polygon.last.last
+    end
+    polygon << [polygon.last.first, y]
   elsif path[i] == 'Z' || path[i] == 'z'
     i += 1
     polygon << polygon.first
+  elsif last_command == 'L' || last_command == 'l'
+    x, y, i = read_coordinates(path, i)
+    if last_command == 'l'
+      x += polygon.last.first
+      y += polygon.last.last
+    end
+    polygon << [x, y]
+  elsif last_command == 'H' || last_command == 'h'
+    x, i = read_coordinates(path, i)
+    if last_command == 'h'
+      x += polygon.last.first
+    end
+    polygon << [x, polygon.last.last]
+  elsif last_command == 'V' || last_command == 'v'
+    y, i = read_coordinates(path, i)
+    if last_command == 'v'
+      y += polygon.last.last
+    end
+    polygon << [polygon.last.first, y]
   end
+
   ++i
 end
+
+puts polygon.inspect
 
 E = 0.0001
 
