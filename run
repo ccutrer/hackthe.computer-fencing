@@ -2,7 +2,7 @@
 
 require 'rexml/document'
 require 'set'
-#require 'byebug'
+require 'byebug'
 
 file = $stdin
 #file = File.open('example2')
@@ -137,8 +137,6 @@ while i < path.length
   end
 end
 
-sleep 5 if polygon[3][1] == polygon[4][1]
-
 E = 0.000000001
 
 def ray_intersects_segment(source, segment)
@@ -187,7 +185,16 @@ points.each do |point|
     puts true
     next
   end
-  if segments.any? { |segment| segment.first[1] == segment[1][1] && segment.first[1] == point[1] && point.first >= segment.first[0] && point.first <= segment[1].first }
+  # on horizontal lines
+  if segments.any? { |segment| segment.first[1] == segment[1][1] && segment.first[1] == point[1] && (
+    point.first >= segment.first[0] && point.first <= segment[1].first ||
+    point.first >= segment[1][0] && point.first <= segment[0][0])}
+    puts true
+    next
+  end
+  # on vertical lines
+  if segments.any? { |segment| segment.first[0] == segment[1][0] && segment.first[0] == point[0] &&
+    point[1] >= segment.first[1] && point[1] <= segment[1][1] }
     puts true
     next
   end
