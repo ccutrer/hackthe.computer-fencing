@@ -112,9 +112,9 @@ while i < path.length
   elsif path[i] == 'Z' || path[i] == 'z'
     i += 1
     polygon << polygon.first
-  elsif last_command == 'L' || last_command == 'l'
+  elsif last_command == 'L' || last_command == 'l' || last_command == 'M' || last_command == 'm'
     x, y, i = read_coordinates(path, i)
-    if last_command == 'l'
+    if last_command == 'l' || last_command == 'm'
       x += polygon.last.first
       y += polygon.last.last
     end
